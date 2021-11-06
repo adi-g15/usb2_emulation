@@ -1,0 +1,7 @@
+project:
+  name:        usb2_emulation
+  description: null
+  repo_url:    null
+  license:     Unlicense
+
+dependencies:

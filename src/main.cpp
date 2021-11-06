@@ -1,37 +1,41 @@
+#include "computer.hpp"
+#include "keyboard.hpp"
 #include <iostream>
-#include "signal.hpp"
 #include <sys/wait.h>
 
 using std::cin, std::cout, std::cerr, std::endl;
 
 int main() {
-    Signal d_plus, d_minus;
+    KeyBoard kb;
 
-    auto pid = fork();
+    auto &d_plus = kb.d_plus_ref();
+    auto &d_minus = kb.d_minus_ref();
 
-    if(pid == -1) {
+    auto computer_pid = fork();
+
+    if (computer_pid == -1) {
         cerr << "ERROR forking";
     }
 
-    if (pid == 0) {
-        // CHILD
+    if (computer_pid != 0) {
+        try {
+            // PARENT (Keyboard)
+            kb.start_sending_signals();
 
-        d_plus.send('a');
-        d_plus.send('d');
-        d_plus.send('i');
-        d_plus.send('t');
-        d_plus.send('y');
-        d_plus.send('a');
-
-        wait(&pid);
+            wait(&computer_pid);
+        } catch (std::exception &e) {
+            cerr << e.what();
+        }
     } else {
-        // PARENT
+        try {
+            // CHILD (Computer)
+            Computer c(d_plus, d_minus);
+            c.wait_for_device();
 
-        long i=6;
-        while (i-->0)
-            cout << d_plus.read();
-
-        exit(0);
+            exit(0);
+        } catch (std::exception &e) {
+            cerr << e.what();
+        }
     }
 
     // One keyboard process, this main will be the computer

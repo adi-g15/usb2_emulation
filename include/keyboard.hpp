@@ -19,19 +19,19 @@ class KeyBoard {
 
     // not literally 'wait' in actual cases
     void start_sending_signals() {
-        cout << "Sending signals to let the other side know my speed" << endl;
+        cout << "[kb] Sending signals to let the other side know my speed" << endl;
 
         d_plus.lock_and_discard();
         d_minus.lock_and_discard();
         if (device_type == LowSpeed) {
             if (!send_diff_one(d_plus, d_minus)) {
                 throw std::logic_error(
-                    "Unable to send signal... Maybe check the cable :)");
+                    "[kb] Unable to send signal... Maybe check the cable :)");
             }
         } else {
             if (!send_diff_zero(d_plus, d_minus)) {
                 throw std::logic_error(
-                    "Unable to send signal... Maybe check the cable :)");
+                    "[kb] Unable to send signal... Maybe check the cable :)");
             }
         }
     }

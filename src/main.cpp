@@ -31,6 +31,11 @@ int main() {
             // CHILD (Computer)
             Computer c(d_plus, d_minus);
             c.wait_for_device();
+            c.request_exclusive_write();    // so that both keyboard & pc dont send signals on the same line simultaneous
+            c.send_in_token();
+
+            // Key down, key up: ./include/linux/keyboard.h
+            // Different keys: There is a pattern there: uapi/linux/keyboard.h
 
             exit(0);
         } catch (std::exception &e) {

@@ -15,6 +15,7 @@ class Signal {
                       // this signal line
     std::atomic_int locked_writer_pid; // the pid that will be writing
     std::atomic_flag reads_blocked;
+    std::mutex lock;
 
   public:
     Signal() : keyboard_pid(getpid()), locked_writer_pid(-1) {
@@ -42,6 +43,7 @@ class Signal {
     //                your messages, but instead keeps reading their own
     //                messages
     inline void _lock() { // prefer lock_and_read instead
+        lock.lock();
         locked_writer_pid.store(getpid());
     }
     // or lock AND ignore (old messages)
@@ -49,6 +51,7 @@ class Signal {
     // missing some messages
     void lock_and_discard() {
         uint8_t buffer[1024];
+        // block till other unlocks it
         _lock();
 
         reads_blocked.test_and_set();
@@ -57,7 +60,11 @@ class Signal {
         }
         reads_blocked.clear();
     }
-    inline void unlock() { locked_writer_pid.store(-1); }
+
+    inline void unlock() {
+        lock.unlock();
+        locked_writer_pid.store(-1);
+    }
 
     // ONLY one process must be writing to it
     bool send(uint8_t byte) {

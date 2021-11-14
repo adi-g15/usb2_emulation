@@ -1,7 +1,14 @@
-usb2_emulation
-----
+## usb2_emulation
 
+## project ON HOLD
 
+Making this public without it even being complete
+Attempting to simulate the communications between a computer and a keyboard.
+
+Primary Resource: https://www.youtube.com/watch?v=wdgULBpRoXk
+
+Resources to look into in future:
+https://www.youtube.com/results?search_query=usb+keyboard+channel%3ABenEater
 
 ## Dependencies
 
